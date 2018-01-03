@@ -1,12 +1,12 @@
-import { Injectable }     from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import { HttpClient } from '@angular/common/http';
-import { Observable }     from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/finally';
 import 'rxjs/add/operator/switchMap';
-import {Subject} from 'rxjs/Subject'
+import { Subject } from 'rxjs/Subject'
 
 export class PendingRequest {
   url: string;
@@ -35,48 +35,32 @@ export class BackendService {
     this.requests$.subscribe(request => this.execute(request));
   }
 
-  // This is your public API - you can extend it to get/post/put or specific
-  // endpoints like 'getUserProfile()' etc.
+  /**This is your public method - you can extend it to get/post/put or specific endpoints like 'getHomeData()' etc.*/
   invoke(url, method, params, options) {
-      return this.addRequestToQueue(url, method, params, options);
+    return this.addRequestToQueue(url, method, params, options);
   }
 
   private execute(requestData) {
-//    const req = this.httpClient.request(requestData.method, requestData.url, requestData.options)
-      // as a last step, invoke next request if any
-//      .finally(() => this.startNextRequest());
-
+    /** Use this.httpClient.request to make it generic for GET/POST/PUT
+     * Need to handle case of http error response, maybe use .finally operator
+    */
     const req = this.httpClient.get(requestData.url)
-        .subscribe(res=>{
-            const sub = requestData.subscription;
-            sub.next(res);
-            this.queue.shift();
-            this.startNextRequest();
+      .subscribe(res => {
+        const sub = requestData.subscription;
+        sub.next(res);
+        this.queue.shift();
+        this.startNextRequest();
 
-        });
-
-        //.finally(() => this.startNextRequest());
-
-    
-    //sub.switchMap(req);
-
+      });
   }
 
   private addRequestToQueue(url, method, params, options) {
     const sub = new Subject<any>();
     const request = new PendingRequest(url, method, options, sub);
-    
-    // if there are no pending req's, execute immediately.
-    // if (this.queue.length === 0) {
-    //   this.requests$.next(request);
-    // } else {
-    //   // otherwise put it to queue.
-    //   this.queue.push(request);
-    // }
+
     this.queue.push(request);
-    // this.startNextRequest();
     if (this.queue.length === 1) {
-        this.startNextRequest();
+      this.startNextRequest();
     }
 
     return sub;

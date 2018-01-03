@@ -1,21 +1,21 @@
 import { Component } from '@angular/core';
-import { MyService } from './my.service';
 import { BackendService } from './backend.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [MyService, BackendService]
+  providers: [BackendService]
 })
 export class AppComponent {
   title = 'app';
   recent: any;
+  req1status=false;
+  req2status=false;
+  req3status=false;
 
-  constructor(
-	private myService: MyService,
-  private backendService: BackendService) {
-		this.title = "Earthquakes past Week 4.5+ Mag";
+  constructor(private backendService: BackendService) {
+		this.title = "Sequential http requests demo";
 	}
     ngOnInit() { 
         this.getEarthquakes(); 
@@ -27,6 +27,7 @@ export class AppComponent {
       .subscribe(
         result => {
           //this.recent = result.features;
+          this.req1status=true;
           console.log('request-1::'+result);
         }
       );
@@ -34,6 +35,7 @@ export class AppComponent {
       .subscribe(
         result => {
           //this.recent = result.features;
+          this.req2status=true;
           console.log('request-2::'+result);
         }
       );
@@ -41,20 +43,10 @@ export class AppComponent {
       .subscribe(
         result => {
           //this.recent = result.features;
+          this.req3status=true;
           console.log('request-3::'+result);
         }
       );
-
-//https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
-//http://www.fakeresponse.com/api/?sleep=5
-
-      //   this.myService.getRecentEarthquakes()
-			// .subscribe(
-      //           recent => this.recent = recent);
-                
-      //   this.myService.getRecentEarthquakes()
-			// .subscribe(
-      //           recent => this.recent = recent);
 
 	}
 }
