@@ -30,8 +30,8 @@ export class BackendService {
 
   constructor(private httpClient: HttpClient) {
     // subscribe to that queue up there
-    this.addRequestToQueue.bind(this);
-    this.execute.bind(this);
+    //this.addRequestToQueue.bind(this);
+    //this.execute.bind(this);
     this.requests$.subscribe(request => this.execute(request));
   }
 
